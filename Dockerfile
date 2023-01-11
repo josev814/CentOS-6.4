@@ -34,12 +34,13 @@ RUN wget http://artfiles.org/openssl.org/source/old/${OPENSSL_VER}/openssl-${OPE
     && wget http://archive.kernel.org/centos-vault/6.8/os/${basearch}/Packages/p11-kit-trust-0.18.5-2.el6_5.2.${basearch}.rpm \
     && rpm -Uvh p11-kit-*rpm \
     && rpm -Uvh ca-certificates-*rpm \
-    && rm -f *.rpmy \
+    && rm -f *.rpm \
     && yum clean all
 
 COPY Epel.repo /etc/yum.repos.d/
 
 RUN yum update \
+    && yum remove firefox thunderbird gnome-* pulseaudio* -y \
     && yum clean all
 
 CMD [ "/bin/bash"]
