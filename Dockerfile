@@ -8,6 +8,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN cd /etc/yum.repos.d \
     && cp CentOS-Base.repo CentOS-Base.repo.bk
+
 COPY CentOS-Base.repo /etc/yum.repos.d/
 
 RUN wget http://artfiles.org/openssl.org/source/old/${OPENSSL_VER}/openssl-${OPENSSL_VER}${OPENSSL_PATCH}.tar.gz \
@@ -35,12 +36,12 @@ RUN wget http://artfiles.org/openssl.org/source/old/${OPENSSL_VER}/openssl-${OPE
     && rpm -Uvh p11-kit-*rpm \
     && rpm -Uvh ca-certificates-*rpm \
     && rm -f *.rpm \
+    && yum remove firefox thunderbird gnome-* pulseaudio* -y \
     && yum clean all
 
 COPY Epel.repo /etc/yum.repos.d/
 
 RUN yum update \
-    && yum remove firefox thunderbird gnome-* pulseaudio* -y \
     && yum clean all
 
 CMD [ "/bin/bash"]
