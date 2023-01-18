@@ -1,4 +1,4 @@
-FROM centos:6.4
+FROM centos:6.4 as liveos
 
 ENV basearch=x86_64
 ENV OPENSSL_VER=1.0.2
@@ -36,10 +36,35 @@ RUN wget http://artfiles.org/openssl.org/source/old/${OPENSSL_VER}/openssl-${OPE
     && rpm -Uvh p11-kit-*rpm \
     && rpm -Uvh ca-certificates-*rpm \
     && rm -f *.rpm \
-    && yum remove firefox thunderbird gnome-* pulseaudio* -y \
+    && yum remove -y firefox thunderbird gnome-* pulseaudio* abyssinica-fonts.x* anaconda-yum-plugins.noarch* \
+    at-spi.x* authconfig-gtk.x* autofs.x* avahi-auto* avahi-glib* avahi-ui* bluez-libs* celt* cifs* cjkuni* comps-extras* \
+    ConsoleKit-x11* control-center* cracklib-python* createrepo* ctapi-common* dbus-x11* dejavu-* deltarpm.x* \
+    DeviceKit-power* device-mapper-multipath* device-mapper-persistent* dmz-cursor* dnsmasq* docbook* enchant* evince* exempi* \
+    fcoe-utils* flac* fontpack* fprint* fuse* gamin-pyton* GConf2* gdm-libs* geniso* glx-utils* gnutls-utils* \
+    gtk2-eng* gtksource* gtk-vnc* guchar* hesiod* iscsi-init* isomd* jomolhari* keyutils.x* khmeros* kurdit* libao* \
+    libarchive* libart* libasync* libata* libavc* libbono* libcacard* libcdio* libconfig* libcroco* libdae* libdmx* libdv*  \
+    liberation* libevent* libexif* libfprint* libglade* libgnome* libgphoto* libgsf* libgss* libgtop* libhba* libical*  \
+    libIDL* libiec* libipt* libmcpp* libopen* libraw* libreport-newt* librsvg* libsample* libselinux-python* libshout*  \
+    libsmb* libsnd* libspectre* libtall* libtdb* libtirp* libtool* libuser-python* libv4l* libvirt* libwacom* libwnck*  \
+    libXdmc* libxk* libXmu* libXres* libXScrn* libxslt* libXvMC* libXxf8* lldpad* lockdev* log4cpp* lohit* madan*  \
+    makebootfat* mcpp* memtest* Modem* mozilla* mtdev* mtools* NetworkManager* nfs4* nfs* nsplug* obex* openct* openob*  \
+    openssh-ask* ORBit* PackageKit* paktype* pcsc* plymouth-graphics* plymouth-plugin* plymouth-system* plymouth-theme*  \
+    plymouth-utils* polkit-* poppler-glib* ppp* pycairo* pygobject* pygtk* pykick* pyorbit* pypart* pyxf86* rarian*  \
+    rdesk* redhat-book* redhat-menu* rpcbind* rtkit* samba* sgml* shared* sil* smc* smp* sound* spee* spice*  \
+    squashfs* startup* stix* syslinux* taglib* thai* tibet* tiger* ttmkf* udisk* un-core* unique* usbred*  \
+    usermode-gtk* vlgo* vte* wacom* wav* wdae* wodim* wpa* wqy* xcb* xdg* xkey* xvattr* yajl* \
     && yum clean all
 
 COPY Epel.repo /etc/yum.repos.d/
+
+# Building the images with all of the extra packages removed from live
+FROM scratch as centos-base
+
+ENV basearch=x86_64
+
+SHELL ["/bin/bash", "-c"]
+
+COPY --from=liveos / /
 
 RUN yum update \
     && yum clean all
